@@ -1,0 +1,12 @@
+{
+  "id": "evt_checkout_ci",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_ci",
+      "customer": "cus_ci_123",
+      "customer_details": { "email": "pro@ci.test" },
+      "metadata": { "plan": "pro" }
+    }
+  }
+}
