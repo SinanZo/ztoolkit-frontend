@@ -1,6 +1,6 @@
 import React from "react";
 import PricingCard from "./PricingCard";
-import { pricingPlans } from "../data/pricing";
+import { getPricingPlans } from "../data/pricing";
 
 export default function Pricing() {
   return (
@@ -14,7 +14,7 @@ export default function Pricing() {
         </p>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan) => (
+          {getPricingPlans().map((plan) => (
             <PricingCard key={plan.id} plan={plan} />
           ))}
         </div>

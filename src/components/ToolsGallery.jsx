@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import useSubscription from "../hooks/useSubscription";
 import {
   Search,
   SlidersHorizontal,
@@ -84,6 +85,8 @@ export default function ToolsGallery({
   const [category, setCategory] = useState("All");
   const [planFilter, setPlanFilter] = useState("All"); // All | Free | Pro
   const [sortBy, setSortBy] = useState("Popular"); // Popular | Newest | A-Z
+
+  const { loading: subLoading, isPro: userIsPro } = useSubscription();
 
   const categories = useMemo(() => {
     const set = new Set(tools.map((t) => t.category).filter(Boolean));
@@ -251,6 +254,9 @@ export default function ToolsGallery({
               const Icon = (CATEGORY_META?.[tool.category]?.icon) || Sparkles;
               const isPro = !!tool.pro;
               const badges = tool.badges || [];
+              // If the tool is pro-only and the current user does not have a pro subscription,
+              // treat it as locked for the UI.
+              const isLockedForUser = isPro && !subLoading && !userIsPro;
 
               return (
                 <div
@@ -316,7 +322,7 @@ export default function ToolsGallery({
 
                   {/* Actions */}
                   <div className="mt-4 flex items-center justify-between gap-3">
-                    {!isPro ? (
+                    {(!isPro || !isLockedForUser) ? (
                       <Link
                         to={`/tools/${tool.slug}`}
                         className="inline-flex items-center gap-2 rounded-2xl bg-black px-4 py-2.5 text-sm font-extrabold text-white transition hover:opacity-90"
