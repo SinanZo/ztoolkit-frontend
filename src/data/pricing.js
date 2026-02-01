@@ -1,0 +1,46 @@
+export const pricingPlans = [
+  {
+    id: "free",
+    name: "Free",
+    price: "$0",
+    stripePriceId: null,
+    description: "Perfect for casual and one-off usage",
+    features: [
+      "Limited daily usage",
+      "Basic tools access",
+      "No account required",
+    ],
+    cta: "Start Free",
+    highlighted: false,
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: "$9 / month",
+    stripePriceId: "price_pro_monthly",
+    description: "For professionals and daily workflows",
+    features: [
+      "Unlimited tool usage",
+      "All Pro tools unlocked",
+      "Priority processing",
+      "Saved history",
+    ],
+    cta: "Upgrade to Pro",
+    highlighted: true,
+  },
+  {
+    id: "business",
+    name: "Business",
+    price: "$29 / month",
+    stripePriceId: "price_business_monthly",
+    description: "For teams and advanced usage",
+    features: [
+      "Team access",
+      "API access",
+      "Higher limits",
+      "Priority support",
+    ],
+    cta: "Contact Sales",
+    highlighted: false,
+  },
+];
