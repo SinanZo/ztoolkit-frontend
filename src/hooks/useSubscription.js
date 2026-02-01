@@ -10,7 +10,12 @@ export default function useSubscription() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('/api/subscription', { credentials: 'same-origin' });
+        // allow using ?email=demo@example.com for local demos (no auth yet)
+        const url = new URL('/api/subscription', window.location.origin);
+        const demoEmail = (new URLSearchParams(window.location.search)).get('demo_email');
+        if (demoEmail) url.searchParams.set('email', demoEmail);
+
+        const res = await fetch(url.toString(), { credentials: 'same-origin' });
         if (!res.ok) throw new Error('failed_fetch');
         const json = await res.json();
         if (!mounted) return;
