@@ -10,13 +10,30 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
+    supportedLngs: ['en', 'ar'],
     resources: {
       en: { translation: en },
-      ar: { translation: ar }
+      ar: { translation: ar },
     },
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
+
+// Apply document direction and language code based on current language
+export function applyHtmlDirection(lng) {
+  if (typeof document === 'undefined') return;
+  const isRtl = lng === 'ar';
+  document.documentElement.lang = lng;
+  document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+}
+
+// Initial sync
+applyHtmlDirection(i18n.language ? i18n.language.split('-')[0] : 'en');
+
+// Sync on language change
+i18n.on('languageChanged', (lng) => {
+  applyHtmlDirection(lng ? lng.split('-')[0] : 'en');
+});
 
 export default i18n;

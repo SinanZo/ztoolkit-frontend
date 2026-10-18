@@ -1,0 +1,14 @@
+{
+  "id": "evt_sub_created_ci",
+  "type": "customer.subscription.created",
+  "data": {
+    "object": {
+      "id": "sub_ci_123",
+      "customer": "cus_ci_123",
+      "status": "active",
+      "current_period_end": 4102444800,
+      "items": { "data": [ { "price": { "id": "price_pro_monthly" } } ] },
+      "metadata": { "plan": "pro" }
+    }
+  }
+}

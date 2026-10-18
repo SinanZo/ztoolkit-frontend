@@ -1,15 +1,13 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import Hero from "../components/Hero.jsx";
+import ToolsGallery from "../components/ToolsGallery.jsx";
+import Pricing from "../components/Pricing.jsx";
 
-const Home = () => {
-  const { t } = useTranslation();
-
+export default function Home() {
   return (
-    <div className="text-center p-10">
-      <h1 className="text-3xl font-bold mb-4">{t('home')}</h1>
-      <p>{t('convertify.title')}</p>
+    <div className="flex flex-col gap-12">
+      <Hero />
+      <ToolsGallery />
+      <Pricing />
     </div>
   );
-};
-
-export default Home;
+}

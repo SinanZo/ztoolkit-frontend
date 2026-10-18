@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+.git
+.github
+.env
+.env.*
+!.env.example
+dist
+coverage
+playwright-report
+test-results
+.processed_events.json
+backend/.processed_events.json
+db-data
