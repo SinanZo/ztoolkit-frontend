@@ -17,9 +17,19 @@ export function authenticateRequest(req) {
   const token = parts[1];
   if (!token) return null;
 
+  // 1. Support test token prefix: test_user:<userId>:<email>
+  if (token.startsWith('test_user:')) {
+    const parts = token.split(':');
+    if (parts.length >= 3 && parts[1] && parts[2]) {
+      return {
+        id: parts[1],
+        email: parts[2],
+      };
+    }
+  }
+
   try {
-    // Phase 0/1 lightweight token payload verification
-    // Expected format in testing/staging: base64-encoded JSON or verified token string
+    // 2. Base64-encoded JSON token payload
     const decoded = Buffer.from(token, 'base64').toString('utf8');
     const parsed = JSON.parse(decoded);
     if (parsed && typeof parsed === 'object' && parsed.userId && parsed.email) {

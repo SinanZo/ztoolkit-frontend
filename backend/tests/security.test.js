@@ -78,6 +78,33 @@ describe('ZToolKit Automated Security Remediation Test Suite', () => {
       assert.strictEqual(data.isPro, false);
     });
 
+    test('Authenticated request with verified user token retrieves active subscription', async () => {
+      const origGetSub = db.getSubscriptionByEmail;
+      db.getSubscriptionByEmail = async (email) => {
+        if (email === 'verified@test.com') {
+          return db.computeSubscriptionState({
+            plan: 'pro',
+            status: 'active',
+            currentPeriodEnd: new Date(Date.now() + 86400000),
+          });
+        }
+        return db.computeSubscriptionState(null);
+      };
+
+      try {
+        const res = await fetch(`${baseUrl}/api/subscription`, {
+          headers: { Authorization: 'Bearer test_user:usr_123:verified@test.com' },
+        });
+        assert.strictEqual(res.status, 200);
+        const data = await res.json();
+        assert.strictEqual(data.plan, 'pro');
+        assert.strictEqual(data.isPro, true);
+        assert.strictEqual(data.status, 'active');
+      } finally {
+        db.getSubscriptionByEmail = origGetSub;
+      }
+    });
+
     test('computeSubscriptionState correctly marks canceled subscriptions as isPro: false', () => {
       const state = db.computeSubscriptionState({
         plan: 'pro',

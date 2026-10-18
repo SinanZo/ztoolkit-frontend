@@ -320,9 +320,18 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json', limit: '
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
         const sub = event.data?.object;
-        const email = sub?.metadata?.email;
-        if (!email) {
-          return res.status(400).json({ error: 'missing_subscription_email' });
+        let email = sub?.metadata?.email;
+        if (!email && sub?.customer && stripe) {
+          try {
+            const customer = await stripe.customers.retrieve(sub.customer);
+            email = customer?.email;
+          } catch (err) {
+            console.warn('Could not retrieve customer from Stripe:', err.message);
+          }
+        }
+
+        if (!email && !sub?.customer) {
+          return res.status(400).json({ error: 'missing_customer_identity' });
         }
 
         const persisted = await db.upsertUserAndSubscription({
@@ -339,14 +348,21 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json', limit: '
 
       case 'customer.subscription.deleted': {
         const sub = event.data?.object;
-        const email = sub?.metadata?.email;
-        if (email) {
+        let email = sub?.metadata?.email;
+        if (!email && sub?.customer && stripe) {
+          try {
+            const customer = await stripe.customers.retrieve(sub.customer);
+            email = customer?.email;
+          } catch (err) {
+            console.warn('Could not retrieve customer from Stripe:', err.message);
+          }
+        }
+        if (email || sub?.customer) {
           const persisted = await db.upsertUserAndSubscription({
             email,
             stripeCustomerId: sub?.customer,
             stripeSub: { ...sub, status: 'canceled' },
           });
-
           if (!persisted) {
             throw new Error('Database persistence failed');
           }

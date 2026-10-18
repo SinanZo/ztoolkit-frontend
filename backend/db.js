@@ -182,17 +182,27 @@ export async function getSubscriptionByEmail(email) {
 }
 
 export async function upsertUserAndSubscription({ email, stripeCustomerId, stripeSub }) {
-  if (!email) throw new Error('email_required');
   assertProductionSafety();
 
   if (isDbAvailable()) {
     try {
-      // Upsert user
-      const user = await prisma.user.upsert({
-        where: { email },
-        update: { stripeCustomerId: stripeCustomerId || undefined },
-        create: { email, stripeCustomerId: stripeCustomerId || undefined },
-      });
+      let user = null;
+      if (email) {
+        user = await prisma.user.upsert({
+          where: { email },
+          update: { stripeCustomerId: stripeCustomerId || undefined },
+          create: { email, stripeCustomerId: stripeCustomerId || undefined },
+        });
+      } else if (stripeCustomerId) {
+        user = await prisma.user.findFirst({
+          where: { stripeCustomerId },
+        });
+      }
+
+      if (!user) {
+        console.warn('upsertUserAndSubscription: user could not be resolved from email or customerId', { email, stripeCustomerId });
+        return false;
+      }
 
       // Upsert subscription
       if (stripeSub) {
