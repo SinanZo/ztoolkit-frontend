@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Helper: POST a webhook fixture to the backend to seed a subscription for email
-async function seedSubscription(t, fixturePath, email) {
+async function seedSubscription(context, fixturePath, email) {
   const fs = await import('fs');
   const raw = fs.readFileSync(fixturePath, 'utf8');
   const payload = JSON.parse(raw);
@@ -9,7 +9,8 @@ async function seedSubscription(t, fixturePath, email) {
   payload.data.object = payload.data.object || {};
   payload.data.object.metadata = { ...(payload.data.object.metadata || {}), email };
 
-  const res = await t.request.post('http://localhost:3000/api/stripe/webhook', {
+  const api = context.request || context;
+  const res = await api.post('http://localhost:3000/api/stripe/webhook', {
     data: payload,
     headers: { 'Content-Type': 'application/json' },
   });
@@ -23,8 +24,8 @@ test.describe('Subscription gating (minimal)', () => {
     await expect(page.locator('text=Locked').first()).toBeVisible();
   });
 
-  test('Pro subscription unlocks Pro tools (seed via webhook)', async ({ page }) => {
-    await seedSubscription(test, './backend/tests/fixtures/customer.subscription.created.json', 'pro@ci.test');
+  test('Pro subscription unlocks Pro tools (seed via webhook)', async ({ page, request }) => {
+    await seedSubscription(request, './backend/tests/fixtures/customer.subscription.created.json', 'pro@ci.test');
     await page.goto('/?demo_email=pro@ci.test');
     await expect(page.locator('text=Locked').first()).toBeHidden({ timeout: 5000 });
     await expect(page.locator('text=Open Tool').first()).toBeVisible();
