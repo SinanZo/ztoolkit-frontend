@@ -5,6 +5,7 @@ async function seedSubscription(context, fixturePath, email) {
   const fs = await import('fs');
   const raw = fs.readFileSync(fixturePath, 'utf8');
   const payload = JSON.parse(raw);
+  payload.id = `${payload.id}_${Date.now()}`;
   payload.data = payload.data || {};
   payload.data.object = payload.data.object || {};
   payload.data.object.metadata = { ...(payload.data.object.metadata || {}), email };

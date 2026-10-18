@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ENV } from '../config/env';
 
 // Simple read-only subscription hook. In prod this should be authenticated.
 export default function useSubscription() {
@@ -11,7 +12,8 @@ export default function useSubscription() {
     (async () => {
       try {
         // allow using ?email=demo@example.com for local demos (no auth yet)
-        const url = new URL('/api/subscription', window.location.origin);
+        const base = ENV.API_BASE || window.location.origin;
+        const url = new URL('/api/subscription', base);
         const demoEmail = (new URLSearchParams(window.location.search)).get('demo_email');
         if (demoEmail) url.searchParams.set('email', demoEmail);
 
