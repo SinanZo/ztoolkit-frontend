@@ -1,9 +1,58 @@
 {
-  "home": "Home",
-  "tools": "Tools",
-  "pricing": "Pricing",
-  "convert": "Convert",
-  "download": "Download",
-  "loading": "Processing...",
-  "convertify.title": "Convert your files to PDF"
+  "nav": {
+    "home": "Home",
+    "tools": "Tools",
+    "pricing": "Pricing",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "Modern Productivity Suite",
+    "title": "All the tools you need in one clean workspace.",
+    "subtitle": "Convert files, edit PDFs, generate codes, and process media with unmatched speed and privacy.",
+    "searchPlaceholder": "Search any tool (e.g. PDF, Image, QR)...",
+    "browseAll": "Browse All Tools",
+    "viewPricing": "View Pricing"
+  },
+  "gallery": {
+    "title": "Explore Tools",
+    "subtitle": "Fast, clean utilities for files, images, dev work, and daily tasks.",
+    "searchPlaceholder": "Filter tools by keyword or format...",
+    "allCategories": "All",
+    "noToolsFound": "No tools found",
+    "noToolsDesc": "Try removing filters or searching with a different keyword.",
+    "resetFilters": "Reset Filters",
+    "seeProPlans": "See Pro Plans",
+    "openTool": "Open Tool",
+    "locked": "Locked",
+    "upgrade": "Upgrade",
+    "goPro": "Go Pro →",
+    "previewBadge": "Preview"
+  },
+  "toolDetails": {
+    "notFound": "Tool not found.",
+    "backToTools": "Back to Tools",
+    "previewNotice": "This tool is currently in active development for Phase 1. Interactive processing will be available soon.",
+    "status": "Development Status",
+    "inDevelopment": "Phase 1 Preview",
+    "category": "Category",
+    "tier": "Access Tier"
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Start for free and upgrade when your workflow demands more power and speed.",
+    "freeTier": "Free",
+    "proTier": "Pro",
+    "businessTier": "Business",
+    "startFree": "Start Free",
+    "upgradePro": "Upgrade to Pro",
+    "contactSales": "Contact Sales"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "tagline": "Simple, high-performance web utilities."
+  },
+  "lang": {
+    "en": "English",
+    "ar": "العربية"
+  }
 }
