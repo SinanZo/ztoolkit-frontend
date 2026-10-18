@@ -7,7 +7,11 @@ export default defineConfig({
   publicDir: 'public',
   plugins: [react()],
   server: {
-    open: true,
+    port: 5173,
+    open: false,
+  },
+  preview: {
+    port: 5173,
   },
   test: {
     globals: true,

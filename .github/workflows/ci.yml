@@ -66,7 +66,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ztoolkit
       - name: Wait for backend
-        run: npx wait-on http://localhost:3000/api/health
+        run: npx wait-on -t 60000 http://localhost:3000/api/health
       - name: Replay webhook fixtures (idempotency check)
         run: |
           curl -s -X POST http://localhost:3000/api/stripe/webhook \
@@ -121,9 +121,9 @@ jobs:
       - name: Build frontend
         run: pnpm build
       - name: Start frontend preview
-        run: pnpm preview &
+        run: pnpm preview --port 5173 &
       - name: Wait for services
-        run: npx wait-on http://localhost:5173 http://localhost:3000/api/health
+        run: npx wait-on -t 60000 http://localhost:5173 http://localhost:3000/api/health
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright E2E
