@@ -67,6 +67,10 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ztoolkit
       - name: Wait for backend
         run: npx wait-on -t 60000 http://localhost:3000/api/health
+      - name: Run backend security test suite
+        run: pnpm --dir backend test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ztoolkit
       - name: Replay webhook fixtures (idempotency check)
         run: |
           curl -s -X POST http://localhost:3000/api/stripe/webhook \
@@ -75,11 +79,15 @@ jobs:
           curl -s -X POST http://localhost:3000/api/stripe/webhook \
             -H 'Content-Type: application/json' \
             --data @backend/tests/fixtures/customer.subscription.created.json | jq .
-      - name: Assert subscription read API
+      - name: Assert subscription read API security
         run: |
           sleep 1
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000/api/subscription?email=pro@ci.test")
-          if [ "$STATUS" != "200" ]; then echo "subscription API failed"; exit 1; fi
+          # Anonymous request with ?email= must safely return Free plan (no data leakage)
+          ANON_PLAN=$(curl -s "http://localhost:3000/api/subscription?email=pro@ci.test" | jq -r .plan)
+          if [ "$ANON_PLAN" != "free" ]; then echo "Subscription API leaked data to unauthenticated request"; exit 1; fi
+          # Authenticated request with Bearer token retrieves verified Pro subscription
+          AUTH_PLAN=$(curl -s -H "Authorization: Bearer test_user:usr_ci:pro@ci.test" "http://localhost:3000/api/subscription" | jq -r .plan)
+          if [ "$AUTH_PLAN" != "pro" ]; then echo "Authenticated subscription lookup failed: got $AUTH_PLAN"; exit 1; fi
 
   e2e:
     needs: [lint-and-unit, backend-integrity]

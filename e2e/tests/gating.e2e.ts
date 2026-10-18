@@ -20,14 +20,24 @@ async function seedSubscription(context, fixturePath, email) {
 
 test.describe('Subscription gating (minimal)', () => {
   test('Free user sees Pro tool locked', async ({ page }) => {
-    await page.goto('/?demo_email=free@ci.test');
+    await page.goto('/');
     await expect(page.locator('text=PRO').first()).toBeVisible();
     await expect(page.getByText('Locked', { exact: true }).first()).toBeVisible();
   });
 
-  test('Pro subscription unlocks Pro tools (seed via webhook)', async ({ page, request }) => {
+  test('Unverified query parameter cannot unlock Pro tools', async ({ page }) => {
+    // Malicious or unverified query parameter must NOT unlock Pro tools
+    await page.goto('/?demo_email=pro@ci.test&email=pro@ci.test');
+    await expect(page.locator('text=PRO').first()).toBeVisible();
+    await expect(page.getByText('Locked', { exact: true }).first()).toBeVisible();
+  });
+
+  test('Pro subscription unlocks Pro tools when authenticated', async ({ page, request }) => {
     await seedSubscription(request, './backend/tests/fixtures/customer.subscription.created.json', 'pro@ci.test');
-    await page.goto('/?demo_email=pro@ci.test');
+    await page.addInitScript(() => {
+      localStorage.setItem('ztoolkit_auth_token', 'test_user:usr_pro_ci:pro@ci.test');
+    });
+    await page.goto('/');
     await expect(page.getByText('Locked', { exact: true })).toBeHidden({ timeout: 5000 });
     await expect(page.getByText('Open Tool', { exact: true }).first()).toBeVisible();
   });
