@@ -8,6 +8,7 @@
     "start": "node server.js",
     "test": "node --test",
     "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:studio": "prisma studio"
   },
