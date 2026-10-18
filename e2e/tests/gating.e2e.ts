@@ -22,14 +22,14 @@ test.describe('Subscription gating (minimal)', () => {
   test('Free user sees Pro tool locked', async ({ page }) => {
     await page.goto('/?demo_email=free@ci.test');
     await expect(page.locator('text=PRO').first()).toBeVisible();
-    await expect(page.locator('text=Locked').first()).toBeVisible();
+    await expect(page.getByText('Locked', { exact: true }).first()).toBeVisible();
   });
 
   test('Pro subscription unlocks Pro tools (seed via webhook)', async ({ page, request }) => {
     await seedSubscription(request, './backend/tests/fixtures/customer.subscription.created.json', 'pro@ci.test');
     await page.goto('/?demo_email=pro@ci.test');
-    await expect(page.locator('text=Locked').first()).toBeHidden({ timeout: 5000 });
-    await expect(page.locator('text=Open Tool').first()).toBeVisible();
+    await expect(page.getByText('Locked', { exact: true })).toBeHidden({ timeout: 5000 });
+    await expect(page.getByText('Open Tool', { exact: true }).first()).toBeVisible();
   });
 
   test('Pricing CTA shows graceful error when backend cannot create session', async ({ page }) => {
